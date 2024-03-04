@@ -1,0 +1,7 @@
+# defaults
+*~
+
+# private aithentication related files
+inteless-config.sh
+ecobee-config.sh
+ecobee_token.json
