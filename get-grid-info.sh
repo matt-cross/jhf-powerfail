@@ -20,8 +20,6 @@ fi
 
 TOKEN=$(jq -r '.["data"].["access_token"]' <<< "${AUTH_RESULT}")
 
-echo "Successfully authenticated"
-
 # TODO: get params json and parse for names
 
 PARAMS_JSON=$(curl -s \
@@ -49,7 +47,6 @@ V_GRID_L1_ID=$(get_param_id "${PARAMS_JSON}" V-grid-L1)
 V_GRID_L2_ID=$(get_param_id "${PARAMS_JSON}" V-grid-L2)
 
 # echo "F_GRID_ID=${F_GRID_ID}, V_GRID_L1_ID=${V_GRID_L1_ID}, V_GRID_L2_ID=${V_GRID_L2_ID}"
-echo "Successfully retrieved data identifiers"
 
 TODAY_YYYYMMDD=$(date +"%Y-%m-%d")
 DATA_JSON=$(curl -s \
@@ -67,4 +64,4 @@ GRID_FREQ=$(get_data_value "${DATA_JSON}" $F_GRID_ID)
 GRID_V_L1=$(get_data_value "${DATA_JSON}" $V_GRID_L1_ID)
 GRID_V_L2=$(get_data_value "${DATA_JSON}" $V_GRID_L2_ID)
 
-echo "Grid freq/v1/v2: ${GRID_FREQ}/${GRID_V_L1}/${GRID_V_L2}"
+echo "{\"grid_freq_hz\":${GRID_FREQ},\"grid_l1_v\":${GRID_V_L1},\"grid_l2_v\":${GRID_V_L2}}"
