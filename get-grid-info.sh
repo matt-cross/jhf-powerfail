@@ -7,7 +7,7 @@ SCRIPT_DIR=$(realpath $(dirname $0))
 . ${SCRIPT_DIR}/inteless-config.sh
 
 AUTH_RESULT=$(curl -s --request POST \
-		   --url https://pv.inteless.com/oauth/token \
+		   --url https://www.solarkcloud.com/oauth/token \
 		   --header 'Content-Type: application/json;charset=UTF-8' \
 		   --data "{\"username\":\"${INTELESS_USERNAME}\",\"password\":\"${INTELESS_PASSWORD}\",\"grant_type\":\"password\",\"client_id\":\"csp-web\",\"source\":\"elinter\"}")
 
@@ -23,7 +23,7 @@ TOKEN=$(jq -r '.["data"].["access_token"]' <<< "${AUTH_RESULT}")
 # TODO: get params json and parse for names
 
 PARAMS_JSON=$(curl -s \
-		   "https://pv.inteless.com/api/v1/inverter/params?lan=en&devType=2&sn=${INVERTER_SN}" \
+		   "https://www.solarkcloud.com/api/v1/inverter/params?lan=en&devType=2&sn=${INVERTER_SN}" \
 		   --header "Authorization: Bearer ${TOKEN}")
 
 # Call with $1=params.json contents, $2=param label
@@ -50,7 +50,7 @@ V_GRID_L2_ID=$(get_param_id "${PARAMS_JSON}" V-grid-L2)
 
 TODAY_YYYYMMDD=$(date +"%Y-%m-%d")
 DATA_JSON=$(curl -s \
-	    "https://pv.inteless.com/api/v1/inverter/${INVERTER_SN}/day?sn=${INVERTER_SN}&date=${TODAY_YYYYMMDD}&edate=${TODAY_YYYYMMDD}&lan=en&params=${F_GRID_ID},${V_GRID_L1_ID},${V_GRID_L2_ID}" \
+	    "https://www.solarkcloud.com/api/v1/inverter/${INVERTER_SN}/day?sn=${INVERTER_SN}&date=${TODAY_YYYYMMDD}&edate=${TODAY_YYYYMMDD}&lan=en&params=${F_GRID_ID},${V_GRID_L1_ID},${V_GRID_L2_ID}" \
 	    --header "Authorization: Bearer ${TOKEN}")
 
 # Call with $1=data json text; $2=id of field to extract
@@ -65,3 +65,14 @@ GRID_V_L1=$(get_data_value "${DATA_JSON}" $V_GRID_L1_ID)
 GRID_V_L2=$(get_data_value "${DATA_JSON}" $V_GRID_L2_ID)
 
 echo "{\"grid_freq_hz\":${GRID_FREQ},\"grid_l1_v\":${GRID_V_L1},\"grid_l2_v\":${GRID_V_L2}}"
+
+
+# Other URL's:
+#
+# get plant list: https://www.solarkcloud.com/api/v1/plants?page=1&limit=10&name=&status=&type=-1&sortCol=createAt&order=2
+#
+# get one day energy data: https://www.solarkcloud.com/api/v1/plant/energy/119796/day?lan=en&date=2024-11-19&id=119796
+#
+# get one month energy data: https://www.solarkcloud.com/api/v1/plant/energy/119796/month?lan=en&date=2024-11&id=119796
+#
+# get yearly energy data: https://www.solarkcloud.com/api/v1/plant/energy/119796/day?lan=en&date=2024-11-19&id=119796
