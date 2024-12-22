@@ -38,15 +38,16 @@ def parse_json(string):
     except json.decoder.JSONDecodeError:
         return None
     
-def fetch_url(url, desc=None, debug=False):
+def fetch_url(url, desc=None, headers=None, method=None, data=None, debug=False):
     """Fetch a URL
 
     On success, return the response as a string.
     On failure, call fatal with an error message.
     """
     if debug:
-        print(f"Attempting to fetch URL '{url}' (desc '{desc}')")
-    response = urllib.request.urlopen(url)
+        print(f"Attempting to fetch URL '{url}' (desc '{desc}') with headers '{headers}'")
+    request = urllib.request.Request(url = url, headers = headers or {}, method=method, data=data)
+    response = urllib.request.urlopen(request)
     if response.status != 200:
         fatal(f"Failed to open {desc or url}, code {response.status} msg {response.msg}")
 

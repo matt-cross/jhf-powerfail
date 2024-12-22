@@ -1,6 +1,8 @@
-from . import utils
+import json
 import time
 import urllib.error
+import urllib.parse
+from . import utils
 
 auth_token_file="ecobee_token.json"
 
@@ -77,3 +79,57 @@ def authenticate(config, pin_display_callback, working_callback):
 
         if not working_callback():
             return False
+
+def get_mode(config):
+    token = auth_token(config)
+
+    if not token:
+        return None
+
+    selector = {
+        "selection": {
+            "selectionType": "registered",
+            "selectionMatch": "",
+            "includeSettings": True,
+        }
+    }
+    selector_json = json.dumps(selector)
+    settings = utils.fetch_url_as_json(
+        f"https://api.ecobee.com/1/thermostat?json={urllib.parse.quote(selector_json)}",
+        headers = {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Authorization": f"Bearer {token}",
+        },
+    )
+
+    return settings.thermostatList[0].settings.hvacMode
+
+def set_mode(config, mode):
+    token = auth_token(config)
+
+    if not token:
+        return None
+
+    selector = {
+        "selection": {
+            "selectionType": "registered",
+            "selectionMatch": "",
+        },
+        "thermostat": {
+            "settings": {
+                "hvacMode": mode,
+            }
+        }
+    }
+    selector_json = json.dumps(selector)
+    response = utils.fetch_url_as_json(
+        f"https://api.ecobee.com/1/thermostat?json",
+        method = "POST",
+        data = selector_json.encode(),
+        headers = {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Authorization": f"Bearer {token}",
+        },
+    )
+
+    return (response.status.code, response.status.message)
