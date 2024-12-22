@@ -1,7 +1,8 @@
 # defaults
 *~
 
-# private aithentication related files
+# private authentication related files
 inteless-config.sh
 ecobee-config.sh
 ecobee_token.json
+jhf-powerfail.conf
