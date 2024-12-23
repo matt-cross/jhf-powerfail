@@ -16,15 +16,18 @@ heat pump at the same time.
 Similarly, when the power comes back on I would like to set the Ecobee
 thermostat back to automatic mode.
 
-This repository contains various scrips and code to implement this.
-Where authentication material is needed, it is storted in
-"<name>-config.sh" files locally, and sample files are provided in the
-repo.
+This repository contains scripts and code (mostly/completely in
+python) to implement this.  Where authentication material is needed,
+it is storted in the "jhf-powerfail.conf" file locally, and a sample
+file are provided in the repo.
 
 The three main scripts are:
-* `get-grid-info.sh`: returns the current grid frequency and voltages
-* `ecobee-get-mode.sh`: gets the current ecobee thermostate mode
-* `ecobee-set-mode.sh`: sets the current ecobee thermostate mode
+* `solark_grid_info.py`: returns the current grid frequency and voltages
+* `ecobee_mode.py`: sets and gets the current ecobee thermostate mode
 
-Plus there is `ecobee-auth.sh` which is used to authenticate your
+Plus there is `ecobee_auth.sh` which is used to authenticate your
 application with your Ecobee account.
+
+NOTE: the full solution (to monitor power failures and automatically
+set the mode of the ecobee) has not been implemented yet.  So that's
+whay you can't find it :)
