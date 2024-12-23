@@ -35,21 +35,28 @@ def parse_json(string):
     """Parse a json string, return as python namedtuple objects"""
     try:
         return json.loads(string, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-    except json.decoder.JSONDecodeError:
+    except (json.decoder.JSONDecodeError, TypeError):
         return None
     
 def fetch_url(url, desc=None, headers=None, method=None, data=None, debug=False):
     """Fetch a URL
 
     On success, return the response as a string.
-    On failure, call fatal with an error message.
+    On failure, return None
     """
     if debug:
         print(f"Attempting to fetch URL '{url}' (desc '{desc}') with headers '{headers}'")
     request = urllib.request.Request(url = url, headers = headers or {}, method=method, data=data)
-    response = urllib.request.urlopen(request)
-    if response.status != 200:
-        fatal(f"Failed to open {desc or url}, code {response.status} msg {response.msg}")
+    try:
+        response = urllib.request.urlopen(request)
+        if response.status != 200:
+            if debug:
+                print(f"Failed to open {desc or url}, code {response.status} msg {response.msg}")
+            return None
+    except urllib.error.HTTPError as http_error:
+        if debug:
+            print(f"Failed to open {desc or url}, code {http_error.code} msg {http_error.reason}")
+        return None
 
     return response.read()
 

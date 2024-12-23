@@ -25,7 +25,7 @@ def auth_token(config):
             open(auth_token_file, "w").write(refreshed_token_json.decode("utf-8"))
             return refreshed_token.access_token
 
-    except:
+    except FileNotFoundError:
         # Something failed during the refresh, so just return None
         return None
     
@@ -104,7 +104,13 @@ def get_mode(config):
 
     return settings.thermostatList[0].settings.hvacMode
 
+valid_modes = set(["auto", "auxHeatOnly", "cool", "heat", "off"])
+
 def set_mode(config, mode):
+    """Set mode of thermostat
+
+    For a list of valid settings see https://www.ecobee.com/home/developer/api/documentation/v1/objects/Settings.shtml"""
+
     token = auth_token(config)
 
     if not token:
@@ -132,4 +138,7 @@ def set_mode(config, mode):
         },
     )
 
-    return (response.status.code, response.status.message)
+    if response:
+        return (response.status.code, response.status.message)
+    else:
+        return (-1, "Failed to set mode")

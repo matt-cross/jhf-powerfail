@@ -10,7 +10,8 @@ def main():
         prog = "ecobee_mode.py",
         description = "Tool to view and change ecobee thermostat modes"
         )
-    parser.add_argument("mode", nargs="?")
+    parser.add_argument("mode", nargs="?",
+                        help=f"Mode to set thermostat to.  Valid modes={jhf.ecobee.valid_modes}")
     args = parser.parse_args()
     
     config = jhf.utils.Config().ecobee
