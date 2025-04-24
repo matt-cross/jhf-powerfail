@@ -12,7 +12,7 @@ def auth_token(config):
     }
     request_data_json = json.dumps(request_data)
     result = utils.fetch_url_as_json(
-        "https://www.solarkcloud.com/oauth/token",
+        "https://api.solarkcloud.com/oauth/token",
         method = "POST",
         headers = {
             "Content-Type": "application/json;charset=UTF-8"
@@ -31,7 +31,7 @@ def auth_token(config):
 
 def plant_id(config, auth):
     result = utils.fetch_url_as_json(
-        f"https://www.solarkcloud.com/api/v1/plants?page=1&limit=10&name=&status=&type=-1&sortCol=createAt&order=2",
+        f"https://api.solarkcloud.com/api/v1/plants?page=1&limit=10&name=&status=&type=-1&sortCol=createAt&order=2",
         headers = { "Authorization": f"Bearer {auth}" })
 
     return result.data.infos[0].id 
@@ -39,7 +39,7 @@ def plant_id(config, auth):
 def inverter_params(config, auth):
     """Returns a dict that maps param name to ID, or an empty dict on failure"""
     raw = utils.fetch_url_as_json(
-        f"https://www.solarkcloud.com/api/v1/inverter/params?lan=en&devType=2&sn={config.sn}",
+        f"https://api.solarkcloud.com/api/v1/inverter/params?lan=en&devType=2&sn={config.sn}",
         headers = { "Authorization": f"Bearer {auth}" })
 
     if not raw:
@@ -65,7 +65,7 @@ def current_data(config, auth, param_names):
     today = datetime.date.today().isoformat()
 
     result = utils.fetch_url_as_json(
-        f"https://www.solarkcloud.com/api/v1/inverter/{config.sn}/day?sn={config.sn}&date={today}&edate={today}&lan=en&params={','.join(param_ids)}",
+        f"https://api.solarkcloud.com/api/v1/inverter/{config.sn}/day?sn={config.sn}&date={today}&edate={today}&lan=en&params={','.join(param_ids)}",
         headers = { "Authorization": f"Bearer {auth}" })
 
     cur_values = {}
@@ -82,7 +82,7 @@ def energy_data_by_day(config, auth, plant_id):
     # starts with "2" - which will be all data from Jan 1, 2000 to Dec
     # 31, 2999.
     result = utils.fetch_url_as_json(
-        f"https://www.solarkcloud.com/api/v1/plant/energy/{plant_id}/month?lan=en&date=2&id={plant_id}",
+        f"https://api.solarkcloud.com/api/v1/plant/energy/{plant_id}/month?lan=en&date=2&id={plant_id}",
         headers = { "Authorization": f"Bearer {auth}" })
 
     # The result puts data in ".data.infos", which is a list of "info"
